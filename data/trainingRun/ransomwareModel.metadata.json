@@ -1,0 +1,64 @@
+{
+  "modelVersion": "1.0.0",
+  "algorithm": "RandomForestClassifier",
+  "featureSchemaVersion": "1.0",
+  "featureColumns": [
+    "fileReadCount",
+    "fileWriteCount",
+    "fileCreateCount",
+    "fileRenameCount",
+    "fileDeleteCount",
+    "filesModifiedPerMinute",
+    "uniqueDirectoriesModified",
+    "uniqueExtensionsModified",
+    "extensionChangeCount",
+    "averageFileEntropy",
+    "entropyChangeRate",
+    "processCpuUsage",
+    "processMemoryUsage",
+    "processLifetime",
+    "networkBytes",
+    "networkConnectionCount"
+  ],
+  "randomSeed": 42,
+  "datasetFingerprint": "366e1b417ec5eafaf3dcf5f53d0e4c70b9a2c9f36471c595a47fed831c751be5",
+  "sampleCount": 16,
+  "metrics": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "falsePositiveRate": 0.0,
+    "falseNegativeRate": 0.0,
+    "perClass": {
+      "Benign": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 2.0
+      },
+      "RANSOMWARE_LIKE": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 1.0
+      },
+      "accuracy": 1.0,
+      "macro avg": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 3.0
+      },
+      "weighted avg": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 3.0
+      }
+    }
+  },
+  "trainingSeconds": 0.165673,
+  "inferenceMilliseconds": 24.194177,
+  "checksum": "a6685161c6ba4b5bd70c325c532727abd76acf40edcbc5735c581acdddef45ab"
+}

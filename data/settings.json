@@ -1,0 +1,35 @@
+{
+  "monitoring": {
+    "enabled": true,
+    "sensitivity": "balanced",
+    "alertCooldownSeconds": 60,
+    "intervalSeconds": 2,
+    "paths": [
+      "/home/sumo/ransomwareDetectionSystem/ransomwareDemo/demo_files"
+    ]
+  },
+  "logging": {
+    "retentionDays": 30,
+    "level": "INFO"
+  },
+  "model": {
+    "version": "current",
+    "path": "data/models/current/model.joblib"
+  },
+  "notifications": {
+    "enabled": true
+  },
+  "response": {
+    "mode": "alertOnly"
+  },
+  "startup": {
+    "enabled": true
+  },
+  "emergencyUsb": {
+    "enabled": true,
+    "scanScope": "protectedFolders"
+  },
+  "ui": {
+    "theme": "dark"
+  }
+}
