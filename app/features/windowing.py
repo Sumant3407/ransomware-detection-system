@@ -4,8 +4,11 @@ from collections import Counter
 from datetime import datetime, timedelta
 from pathlib import Path
 import math
+import logging
 
 from app.domain.schemas import FileAction, FileEvent, FeatureSample, featureColumns, getCurrentTime
+
+logger = logging.getLogger(__name__)
 
 
 class FeatureWindow:
@@ -45,7 +48,14 @@ class FeatureWindow:
         # the always-on detector predictable on large workloads.
         for event in modifiedEvents[-32:]:
             try:
-                with Path(event.path).open("rb") as file:
+                event_path = Path(event.path)
+                # Skip special file types and very large files
+                if event_path.suffix.lower() in {'.exe', '.dll', '.sys', '.drv'}:
+                    continue
+                if event_path.is_file() and event_path.stat().st_size > 10 * 1024 * 1024:  # Skip files > 10MB
+                    continue
+
+                with event_path.open("rb") as file:
                     data = file.read(4096)
                 if data:
                     frequencies = Counter(data)
@@ -53,7 +63,8 @@ class FeatureWindow:
                     entropyValues.append(
                         -sum((count / length) * math.log2(count / length) for count in frequencies.values())
                     )
-            except OSError:
+            except (OSError, PermissionError) as error:
+                logger.debug(f"Unable to calculate entropy for {event.path}: {error}")
                 continue
         averageEntropy = sum(entropyValues) / len(entropyValues) if entropyValues else 0.0
         entropyChangeRate = abs(averageEntropy - self.previousEntropy)

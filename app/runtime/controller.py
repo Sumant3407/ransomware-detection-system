@@ -16,6 +16,8 @@ from app.monitoring.windowsFileEvents import WindowsFileEventSource, WindowsWatc
 
 
 class DetectionController:
+    """Headless monitoring controller with context manager support."""
+
     def __init__(self, monitoredPath: Path, databasePath: Path, modelPath: Path | None = None, alertCooldownSeconds: int = 60):
         self.monitoredPath = monitoredPath.resolve()
         self.databasePath = databasePath
@@ -44,6 +46,15 @@ class DetectionController:
         self.sessionId = None
         self.lastEventSummary = "No recent file activity."
         self.lastCollectedEventCount = 0
+
+    def __enter__(self):
+        """Context manager entry."""
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Context manager exit with guaranteed cleanup."""
+        self.close()
+        return False
 
     def startSession(self) -> int:
         cursor = self.connection.execute(

@@ -15,6 +15,8 @@ class WindowsWatcherUnavailable(RuntimeError):
 
 
 class WindowsFileEventSource:
+    """Windows file event source with proper resource management."""
+
     def __init__(self, directory: Path):
         if os.name != "nt":
             raise WindowsWatcherUnavailable("ReadDirectoryChangesW requires Windows")
@@ -34,6 +36,19 @@ class WindowsFileEventSource:
         )
         if self.handle == wintypes.HANDLE(-1).value:
             raise WindowsWatcherUnavailable("Unable to open monitored directory")
+
+    def __enter__(self):
+        """Context manager entry."""
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Context manager exit with guaranteed cleanup."""
+        self.close()
+        return False
+
+    def __del__(self):
+        """Ensure handle is closed on garbage collection."""
+        self.close()
 
     def collectEvents(self, timeoutMilliseconds: int = 1000) -> list[FileEvent]:
         buffer = self.ctypes.create_string_buffer(64 * 1024)
