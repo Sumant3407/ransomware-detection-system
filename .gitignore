@@ -1,0 +1,87 @@
+# ==============================================================================
+# Git Ignore Configuration — Ransomware Detection System
+# ==============================================================================
+
+# Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+
+# Testing & Code Coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# JavaScript / TypeScript / Electron / Vite Artifacts
+node_modules/
+dist/
+dist-electron/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+*.tsbuildinfo
+
+# Application Runtime Logs, Backups & Ephemeral Files
+data/logs/*.log*
+!data/logs/.gitkeep
+data/database/*.sqlite3-shm
+data/database/*.sqlite3-wal
+data/backups/*
+!data/backups/.gitkeep
+data/path.key
+data/storage.db
+
+# Test Files & Demo Sandbox
+testFiles/*
+!testFiles/.demo-sandbox
+
+# Temporary Root Artifacts
+ransomwareModel.joblib
+ransomwareModel.metadata.json
+uiPrompt.txt
+
+# Operating System & Editor Metadata
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace

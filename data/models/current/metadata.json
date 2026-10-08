@@ -1,0 +1,383 @@
+{
+  "modelVersion": "v1.0.1",
+  "algorithm": "RandomForestClassifier",
+  "featureSchemaVersion": "1.0",
+  "featureColumns": [
+    "fileReadCount",
+    "fileWriteCount",
+    "fileCreateCount",
+    "fileRenameCount",
+    "fileDeleteCount",
+    "filesModifiedPerMinute",
+    "uniqueDirectoriesModified",
+    "uniqueExtensionsModified",
+    "extensionChangeCount",
+    "averageFileEntropy",
+    "entropyChangeRate",
+    "processCpuUsage",
+    "processMemoryUsage",
+    "processLifetime",
+    "networkBytes",
+    "networkConnectionCount"
+  ],
+  "randomSeed": 42,
+  "datasetFingerprint": "e96af68f516dd9af707ead92f13ff70d093979aa66e6c26a26aa9f7eb6a8c3ea",
+  "sampleCount": 300,
+  "useScaler": true,
+  "crossValidation": {
+    "folds": 5,
+    "meanAccuracy": 1.0,
+    "stdAccuracy": 0.0,
+    "meanPrecision": 1.0,
+    "stdPrecision": 0.0,
+    "meanRecall": 1.0,
+    "stdRecall": 0.0,
+    "meanF1": 1.0,
+    "stdF1": 0.0,
+    "meanRocAuc": 1.0,
+    "stdRocAuc": 0.0,
+    "meanFalsePositiveRate": 0.0,
+    "stdFalsePositiveRate": 0.0,
+    "meanFalseNegativeRate": 0.0,
+    "stdFalseNegativeRate": 0.0,
+    "foldMetrics": [
+      {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "rocAuc": 1.0,
+        "falsePositiveRate": 0.0,
+        "falseNegativeRate": 0.0,
+        "confusionMatrix": [
+          [
+            30,
+            0
+          ],
+          [
+            0,
+            30
+          ]
+        ],
+        "labels": [
+          "Benign",
+          "Ransomware"
+        ],
+        "perClass": {
+          "Benign": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "Ransomware": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "accuracy": 1.0,
+          "macro avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 60.0
+          },
+          "weighted avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 60.0
+          }
+        },
+        "fold": 1
+      },
+      {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "rocAuc": 1.0,
+        "falsePositiveRate": 0.0,
+        "falseNegativeRate": 0.0,
+        "confusionMatrix": [
+          [
+            30,
+            0
+          ],
+          [
+            0,
+            30
+          ]
+        ],
+        "labels": [
+          "Benign",
+          "Ransomware"
+        ],
+        "perClass": {
+          "Benign": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "Ransomware": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "accuracy": 1.0,
+          "macro avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 60.0
+          },
+          "weighted avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 60.0
+          }
+        },
+        "fold": 2
+      },
+      {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "rocAuc": 1.0,
+        "falsePositiveRate": 0.0,
+        "falseNegativeRate": 0.0,
+        "confusionMatrix": [
+          [
+            30,
+            0
+          ],
+          [
+            0,
+            30
+          ]
+        ],
+        "labels": [
+          "Benign",
+          "Ransomware"
+        ],
+        "perClass": {
+          "Benign": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "Ransomware": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "accuracy": 1.0,
+          "macro avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 60.0
+          },
+          "weighted avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 60.0
+          }
+        },
+        "fold": 3
+      },
+      {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "rocAuc": 1.0,
+        "falsePositiveRate": 0.0,
+        "falseNegativeRate": 0.0,
+        "confusionMatrix": [
+          [
+            30,
+            0
+          ],
+          [
+            0,
+            30
+          ]
+        ],
+        "labels": [
+          "Benign",
+          "Ransomware"
+        ],
+        "perClass": {
+          "Benign": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "Ransomware": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "accuracy": 1.0,
+          "macro avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 60.0
+          },
+          "weighted avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 60.0
+          }
+        },
+        "fold": 4
+      },
+      {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "rocAuc": 1.0,
+        "falsePositiveRate": 0.0,
+        "falseNegativeRate": 0.0,
+        "confusionMatrix": [
+          [
+            30,
+            0
+          ],
+          [
+            0,
+            30
+          ]
+        ],
+        "labels": [
+          "Benign",
+          "Ransomware"
+        ],
+        "perClass": {
+          "Benign": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "Ransomware": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "accuracy": 1.0,
+          "macro avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 60.0
+          },
+          "weighted avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 60.0
+          }
+        },
+        "fold": 5
+      }
+    ]
+  },
+  "metrics": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "rocAuc": 1.0,
+    "falsePositiveRate": 0.0,
+    "falseNegativeRate": 0.0,
+    "confusionMatrix": [
+      [
+        30,
+        0
+      ],
+      [
+        0,
+        30
+      ]
+    ],
+    "labels": [
+      "Benign",
+      "Ransomware"
+    ],
+    "perClass": {
+      "Benign": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 30.0
+      },
+      "Ransomware": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 30.0
+      },
+      "accuracy": 1.0,
+      "macro avg": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 60.0
+      },
+      "weighted avg": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 60.0
+      }
+    }
+  },
+  "featureImportances": {
+    "filesModifiedPerMinute": 0.190488,
+    "extensionChangeCount": 0.18,
+    "entropyChangeRate": 0.171598,
+    "fileWriteCount": 0.16227,
+    "fileRenameCount": 0.130491,
+    "uniqueDirectoriesModified": 0.067077,
+    "fileCreateCount": 0.048199,
+    "averageFileEntropy": 0.029997,
+    "uniqueExtensionsModified": 0.009541,
+    "fileDeleteCount": 0.009512,
+    "fileReadCount": 0.000497,
+    "networkBytes": 0.00033,
+    "processCpuUsage": 0.0,
+    "processMemoryUsage": 0.0,
+    "processLifetime": 0.0,
+    "networkConnectionCount": 0.0
+  },
+  "hyperparameterTuning": null,
+  "trainingSeconds": 0.116217,
+  "inferenceMilliseconds": 6.5305,
+  "checksum": "3c13dc50443db113c8a21610d9c4e94d6f245eeaface926d9dcedb6103dbbfbb",
+  "unencryptedChecksum": "ffa5da425fc5289c507a4aed34825f23199c332a577f0b26901867ba89c7fe8d",
+  "encrypted": true,
+  "validationSummary": {
+    "status": "PASSED",
+    "sampleCount": 300,
+    "classDistribution": {
+      "benign": 150,
+      "ransomware": 150
+    }
+  }
+}

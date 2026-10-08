@@ -33,9 +33,10 @@ class InteractiveCLI:
         self.console = ConsoleDisplay()
         self.configuration = loadConfiguration()
         self.databasePath = getDataDirectory() / "database" / "detector.sqlite3"
-        self.monitoringPath = resolveMonitoringPath(
-            self.configuration["monitoring"]["paths"][0]
-        )
+        self.monitoredPaths = [
+            resolveMonitoringPath(p) for p in self.configuration["monitoring"]["paths"]
+        ]
+        self.monitoringPath = self.monitoredPaths[0]
         self.modelPath = self._get_model_path()
         self.worker: Optional[MonitoringWorker] = None
         self.monitoring_active = False
@@ -69,8 +70,10 @@ class InteractiveCLI:
                 elif choice == "6":
                     self.configuration_menu()
                 elif choice == "7":
-                    self.view_model_info()
+                    self.demo_sandbox_menu()
                 elif choice == "8":
+                    self.view_model_info()
+                elif choice == "9":
                     break
 
             except KeyboardInterrupt:
@@ -122,8 +125,9 @@ class InteractiveCLI:
             ("4", "Scan Now"),
             ("5", "View Detection History"),
             ("6", "Configuration"),
-            ("7", "Model Information"),
-            ("8", "Exit"),
+            ("7", "Live Demo & Lab Simulation"),
+            ("8", "Model Information"),
+            ("9", "Exit"),
         ])
 
         choice = input(f"{self.console.CYAN}Select option: {self.console.RESET}").strip()
@@ -148,9 +152,9 @@ class InteractiveCLI:
         # Start worker
         self.session_start_time = datetime.now()
         self.worker = MonitoringWorker(
-            self.monitoringPath,
-            self.databasePath,
-            self.modelPath if model_valid else None,
+            monitoredPaths=self.monitoredPaths,
+            databasePath=self.databasePath,
+            modelPath=self.modelPath if model_valid else None,
             intervalSeconds=float(self.configuration["monitoring"].get("intervalSeconds", 1)),
             onError=self._on_monitoring_error,
             onFinished=self._on_monitoring_finished,
@@ -180,6 +184,8 @@ class InteractiveCLI:
 
                 model_status = "Active" if self._is_model_valid(self.modelPath) else "No model (rule-based only)"
 
+                monitoring_label = str(self.monitoredPaths[0]) if len(self.monitoredPaths) == 1 else f"{len(self.monitoredPaths)} paths ({', '.join(p.name for p in self.monitoredPaths)})"
+
                 display.update(
                     protected=self.monitoring_active,
                     threat_level=stats["threat_level"],
@@ -189,7 +195,7 @@ class InteractiveCLI:
                     last_event=stats["last_event"],
                     uptime=self._format_uptime(uptime),
                     model_status=model_status,
-                    monitoring_path=str(self.monitoringPath),
+                    monitoring_path=monitoring_label,
                 )
 
                 time.sleep(0.2)  # Refresh 5 times per second
@@ -239,7 +245,12 @@ class InteractiveCLI:
 
         # Configuration
         print(f"{self.console.BOLD}Configuration:{self.console.RESET}")
-        print(self.console.format_status_line("  Monitoring Path", str(self.monitoringPath)))
+        if len(self.monitoredPaths) == 1:
+            print(self.console.format_status_line("  Monitoring Path", str(self.monitoredPaths[0])))
+        else:
+            print(self.console.format_status_line("  Monitoring Paths", f"{len(self.monitoredPaths)} active"))
+            for idx, p in enumerate(self.monitoredPaths, 1):
+                print(self.console.format_status_line(f"    [{idx}]", str(p)))
         print(self.console.format_status_line(
             "  Interval",
             f"{self.configuration['monitoring'].get('intervalSeconds', 1)}s"
@@ -286,14 +297,14 @@ class InteractiveCLI:
         input(f"{self.console.DIM}Press Enter to continue...{self.console.RESET}")
 
     def scan_now(self) -> None:
-        """Perform a one-time scan."""
+        """Perform a one-time scan across all monitored paths."""
         self.console.print_banner("Running scan...", "info")
 
         try:
             controller = DetectionController(
-                self.monitoringPath,
-                self.databasePath,
-                self.modelPath if self._is_model_valid(self.modelPath) else None,
+                monitoredPaths=self.monitoredPaths,
+                databasePath=self.databasePath,
+                modelPath=self.modelPath if self._is_model_valid(self.modelPath) else None,
             )
 
             try:
@@ -551,6 +562,60 @@ class InteractiveCLI:
 
         print()
         input(f"{self.console.DIM}Press Enter to continue...{self.console.RESET}")
+
+    def demo_sandbox_menu(self) -> None:
+        """Interactive demonstration and lab workload menu."""
+        from app.operations.demoEngine import DemoEngine
+
+        engine = DemoEngine()
+        while True:
+            self.console.clear_screen()
+            print_menu("LIVE DEMO & LABORATORY SANDBOX", [
+                ("1", "Generate Benign Office Documents (25 files)"),
+                ("2", "Simulate Normal User Office Work (Low-velocity edits)"),
+                ("3", "Simulate Sandboxed Ransomware Attack (Safe mass renames)"),
+                ("4", "Clean & Reset Demo Sandbox"),
+                ("5", "Back to Main Menu"),
+            ])
+            choice = input(f"{self.console.CYAN}Select option [1-5]: {self.console.RESET}").strip()
+            if choice == "1":
+                print(f"\n{self.console.BOLD}[*] Generating benign documents in testFiles/...{self.console.RESET}")
+                report = engine.generateBenignFiles(
+                    count=25,
+                    callback=lambda c, t, n: print(f"  {self.console.GREEN}[+]{self.console.RESET} ({c}/{t}) Generated {n}"),
+                )
+                print()
+                self.console.print_banner(f"Generated {report.filesCreated} files in {report.durationSeconds:.2f}s", "success")
+                input("\nPress Enter to continue...")
+            elif choice == "2":
+                print(f"\n{self.console.BOLD}[*] Simulating normal user activity in testFiles/...{self.console.RESET}")
+                report = engine.simulateNormalActivity(
+                    steps=10,
+                    delaySeconds=0.15,
+                    callback=lambda c, t, d: print(f"  {self.console.CYAN}[+]{self.console.RESET} Step {c}/{t}: {d}"),
+                )
+                print()
+                self.console.print_banner(f"Simulated normal user work ({report.durationSeconds:.2f}s, Threat: LOW)", "success")
+                input("\nPress Enter to continue...")
+            elif choice == "3":
+                print(f"\n{self.console.BOLD}{self.console.RED}[!] Simulating safe ransomware attack on 20 files in testFiles/...{self.console.RESET}")
+                report = engine.simulateRansomwareAttack(
+                    fileCount=20,
+                    callback=lambda c, t, d: print(f"  {self.console.RED}[!]{self.console.RESET} {c}/{t}: {d}"),
+                )
+                print()
+                self.console.print_banner(f"Attack simulation complete ({report.filesRenamed} files renamed in {report.durationSeconds:.2f}s)", "warning")
+                input("\nPress Enter to continue...")
+            elif choice == "4":
+                print(f"\n{self.console.BOLD}[*] Cleaning demo sandbox...{self.console.RESET}")
+                report = engine.cleanSandbox(
+                    callback=lambda d: print(f"  {self.console.DIM}[-]{self.console.RESET} {d}"),
+                )
+                print()
+                self.console.print_banner(f"Cleaned {report.filesDeleted} files from demo sandbox", "success")
+                input("\nPress Enter to continue...")
+            elif choice == "5" or not choice:
+                break
 
     def _get_monitoring_stats(self) -> dict:
         """Get current monitoring statistics from database."""

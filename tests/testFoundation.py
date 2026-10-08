@@ -10,19 +10,19 @@ from app.storage.sqliteStore import initializeDatabase
 
 class FoundationTests(unittest.TestCase):
     def testConfigurationLoadsAndResolvesProjectPath(self):
-        configuration = loadConfiguration()
-        self.assertEqual(configuration["response"]["mode"], "alertOnly")
-        self.assertTrue(resolveMonitoringPath("testFiles").is_relative_to(Path.cwd()))
+        with tempfile.TemporaryDirectory() as tempDir:
+            configuration = loadConfiguration()
+            self.assertEqual(configuration["response"]["mode"], "alertOnly")
+            resolved = resolveMonitoringPath(tempDir)
+            self.assertTrue(resolved.is_dir())
 
-    def testConfigurationRejectsApplicationDirectories(self):
+    def testConfigurationRejectsSystemDirectories(self):
         with self.assertRaises(ConfigurationError):
-            resolveMonitoringPath("app")
+            resolveMonitoringPath(r"C:\Windows\System32")
 
-    def testConfigurationRejectsProjectRootAndOutsidePath(self):
+    def testConfigurationRejectsNonexistentPath(self):
         with self.assertRaises(ConfigurationError):
-            resolveMonitoringPath(".")
-        with self.assertRaises(ConfigurationError):
-            resolveMonitoringPath("../outside")
+            resolveMonitoringPath("nonexistent_directory_12345")
 
     def testDatabaseInitializesVersionedSchema(self):
         with tempfile.TemporaryDirectory() as temporaryDirectory:

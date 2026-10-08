@@ -79,7 +79,7 @@ class ConsoleDisplay:
     def format_header(self, text: str, width: Optional[int] = None) -> str:
         """Format a section header."""
         w = width or self.width
-        return f"{self.BOLD}{self.CYAN}{text}{self.RESET}\n{'═' * w}\n"
+        return f"{self.BOLD}{self.CYAN}{text}{self.RESET}\n{'=' * w}\n"
 
     def format_status_line(self, label: str, value: str, color: str = "") -> str:
         """Format a status line with label and value."""
@@ -90,28 +90,28 @@ class ConsoleDisplay:
         """Format content in a box."""
         width = self.width - 4
         lines = [
-            f"{color}╔{'═' * (width - 2)}╗{self.RESET}",
-            f"{color}║{self.RESET} {self.BOLD}{title}{self.RESET}{' ' * (width - len(title) - 3)}{color}║{self.RESET}",
-            f"{color}╠{'═' * (width - 2)}╣{self.RESET}",
+            f"{color}+{'-' * (width - 2)}+{self.RESET}",
+            f"{color}|{self.RESET} {self.BOLD}{title}{self.RESET}{' ' * (width - len(title) - 3)}{color}|{self.RESET}",
+            f"{color}+{'-' * (width - 2)}+{self.RESET}",
         ]
 
         for line in content.split('\n'):
             padding = width - len(line) - 3
-            lines.append(f"{color}║{self.RESET} {line}{' ' * padding}{color}║{self.RESET}")
+            lines.append(f"{color}|{self.RESET} {line}{' ' * padding}{color}|{self.RESET}")
 
-        lines.append(f"{color}╚{'═' * (width - 2)}╝{self.RESET}")
+        lines.append(f"{color}+{'-' * (width - 2)}+{self.RESET}")
         return '\n'.join(lines) + '\n'
 
     def print_banner(self, text: str, style: str = "info") -> None:
         """Print a banner message."""
         styles = {
-            "info": (self.BLUE, "ℹ"),
-            "success": (self.GREEN, "✓"),
-            "warning": (self.YELLOW, "⚠"),
-            "error": (self.RED, "✗"),
-            "critical": (self.BG_RED + self.WHITE, "⚠"),
+            "info": (self.BLUE, "[i]"),
+            "success": (self.GREEN, "[OK]"),
+            "warning": (self.YELLOW, "[!]"),
+            "error": (self.RED, "[X]"),
+            "critical": (self.BG_RED + self.WHITE, "[CRITICAL]"),
         }
-        color, icon = styles.get(style, (self.WHITE, "•"))
+        color, icon = styles.get(style, (self.WHITE, "*"))
         print(f"\n{color}{self.BOLD} {icon} {text} {self.RESET}\n")
 
 
@@ -173,7 +173,7 @@ class LiveMonitorDisplay:
 
         # Status line
         protection_color = c.GREEN if protected else c.RED
-        protection_text = "● PROTECTED" if protected else "● STOPPED"
+        protection_text = "[*] PROTECTED" if protected else "[!] STOPPED"
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         output.append(f"{protection_color}{c.BOLD}{protection_text}{c.RESET}  |  {c.DIM}{timestamp}{c.RESET}")
@@ -182,17 +182,17 @@ class LiveMonitorDisplay:
         # Threat alert banner
         if threat_level in ("high", "critical"):
             banner_color = c.BG_RED + c.WHITE
-            output.append(f"{banner_color}{c.BOLD} ⚠ RANSOMWARE-LIKE ACTIVITY DETECTED - RISK {risk_score:.2f} ⚠ {c.RESET}")
+            output.append(f"{banner_color}{c.BOLD} [!] RANSOMWARE-LIKE ACTIVITY DETECTED - RISK {risk_score:.2f} [!] {c.RESET}")
             output.append("")
         elif threat_level == "medium":
             banner_color = c.BG_YELLOW + c.WHITE
-            output.append(f"{banner_color}{c.BOLD} ⚠ SUSPICIOUS FILE ACTIVITY - RISK {risk_score:.2f} ⚠ {c.RESET}")
+            output.append(f"{banner_color}{c.BOLD} [!] SUSPICIOUS FILE ACTIVITY - RISK {risk_score:.2f} [!] {c.RESET}")
             output.append("")
 
         # Main metrics
         threat_color = c.get_threat_color(threat_level)
         output.append(f"{c.BOLD}STATUS OVERVIEW{c.RESET}")
-        output.append(f"{'─' * c.width}")
+        output.append(f"{'-' * c.width}")
         output.append(f"  Threat Level:     {threat_color}{c.BOLD}{threat_level.upper()}{c.RESET}")
         output.append(f"  Risk Score:       {threat_color}{risk_score:.4f}{c.RESET}")
         output.append(f"  Files Changed:    {c.WHITE}{files_changed}{c.RESET}")
@@ -202,7 +202,7 @@ class LiveMonitorDisplay:
 
         # Recent activity
         output.append(f"{c.BOLD}RECENT ACTIVITY{c.RESET}")
-        output.append(f"{'─' * c.width}")
+        output.append(f"{'-' * c.width}")
         if last_event:
             output.append(f"  {last_event}")
         else:
@@ -211,7 +211,7 @@ class LiveMonitorDisplay:
 
         # System info
         output.append(f"{c.BOLD}SYSTEM INFORMATION{c.RESET}")
-        output.append(f"{'─' * c.width}")
+        output.append(f"{'-' * c.width}")
         output.append(f"  Monitoring Path:  {c.DIM}{monitoring_path}{c.RESET}")
         output.append(f"  Model Status:     {c.DIM}{model_status}{c.RESET}")
         output.append("")
@@ -268,7 +268,7 @@ def print_status_table(headers: list[str], rows: list[list[str]]) -> None:
         for h, w in zip(headers, col_widths)
     )
     print(header_line)
-    print("─" * (sum(col_widths) + 3 * (len(headers) - 1)))
+    print("-" * (sum(col_widths) + 3 * (len(headers) - 1)))
 
     # Print rows
     for row in rows:

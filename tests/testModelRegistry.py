@@ -12,10 +12,13 @@ from trainingModel.training.trainModel import trainModel
 
 class ModelRegistryTests(unittest.TestCase):
     def createDataset(self):
-        return pd.DataFrame([
-            {**{column: float(index + offset) for offset, column in enumerate(featureColumns)}, "label": "Benign" if index < 10 else "Ransomware"}
-            for index in range(20)
-        ])
+        rows = []
+        for index in range(20):
+            row = {column: float(index + offset) for offset, column in enumerate(featureColumns)}
+            row["averageFileEntropy"] = min(7.5, 3.0 + (index * 0.1))
+            row["label"] = "Benign" if index < 10 else "Ransomware"
+            rows.append(row)
+        return pd.DataFrame(rows)
 
     def testValidModelCanBeActivated(self):
         with tempfile.TemporaryDirectory() as temporaryDirectory:

@@ -1,356 +1,310 @@
-# Ransomware Detection System
+# Ransomware Detection System — Behavioral ML & Forensic Platform
 
-A command-line ransomware detection system using machine learning to identify ransomware-like file behavior. The application runs entirely in the terminal and uses safe, non-destructive simulation for development and testing.
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)](https://github.com/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Security Hardened](https://img.shields.io/badge/security-AES--256--GCM-brightgreen.svg)](docs/SECURITY.md)
 
-> **Note:** This is the CMD-only version (v2.0). The original GUI version has been replaced with an interactive terminal interface. See `README_CMD.md` for detailed documentation.
+An enterprise-grade, offline behavioral ransomware detection, prevention, and forensic investigation system powered by Machine Learning. The system monitors protected directories in real time, correlates mass file operations with process lineage, calculates threat risk scores via random forest classifiers, and captures immutable forensic evidence snapshots for security operations centers (SOC).
 
-## 1. Requirements
+The application features both a **Modern Desktop GUI SOC Dashboard** and an **Interactive Terminal Command Center**, with cross-platform support, zero external telemetry, and offline ML inference.
 
-- **Windows 10 or Windows 11** (recommended for full features)
-- **Python 3.11 or newer**
-- **PowerShell** or any modern terminal
-- A disposable directory for test activity
+---
 
-**Cross-Platform Support:**
-- Windows: Full native file monitoring (ReadDirectoryChangesW)
-- Linux/macOS: Polling-based monitoring (fully functional)
+## 🌟 Key Highlights
 
-Normal detection does not require an internet connection after the dependencies are installed.
+- **🖥️ Triple Operating Interfaces:**
+  - **Modern Desktop GUI SOC Dashboard:** Sleek, dark-themed Tkinter/TTK interface with live streaming activity feeds, forensic ancestry trees, subsystem health gauges, model retraining runners, and folder manager (`python -m app.main --gui`).
+  - **Zion CRT Terminal Desktop Station:** High-fidelity raw WebGL + Canvas 2D phosphor green CRT terminal interface with Zion mainframe boot animation, curvature, bloom, scanline shaders, and hardware acceleration (`npm start` / `npm run electron:preview`).
+  - **Interactive Terminal Console:** Full-featured ANSI terminal UI with live progress gauges, historical inspection, and fast keyboard workflows (`python -m app.main --interactive`).
+  - **Headless Daemon Mode:** Scriptable background daemon with configurable sampling intervals, event limits, and JSON stdout piping.
+- **🛡️ Real-Time Native Windows API & Multi-Path Monitoring:**
+  - High-frequency asynchronous directory watching via `ReadDirectoryChangesW` with overlapped I/O and graceful polling fallback for network shares or Linux/macOS hosts.
+  - Multi-path concurrent watching across arbitrary folders (e.g., Documents, Downloads, Desktop, shared project directories).
+- **🔍 Deep Process Attribution & Forensic Snapshots:**
+  - Real-time resolution of executing Process IDs (`PID`), Process Names, Parent Process IDs (`PPID`), and full process ancestry trees (`PID -> PPID -> Grandparent`).
+  - Automatic immutable forensic snapshot capture on alert triggers (SHA-256 hashes, affected path hashes, user context, and system telemetry).
+- **🔒 AES-256-GCM Model Encryption & Integrity Validation:**
+  - Machine-bound key derivation (PBKDF2-HMAC-SHA256) for scikit-learn model artifacts at rest.
+  - Anti-tampering signature checks, dataset poisoning guards, and preflight inference smoke tests.
+- **⚡ Hot-Reloading & Live Model Swapping:**
+  - Dynamic zero-downtime configuration hot-reload and atomic model pointer swapping without terminating active monitoring threads.
+  - Automatic rollback on schema validation failure.
+- **🗄️ Robust SQLite Storage & Maintenance:**
+  - Thread-safe RLock connection pooling in WAL mode.
+  - Built-in online hot backup manager, SHA-256 integrity verification, automated event pruning, and WAL checkpoints.
 
-## 2. Open the Project
+---
 
-Open PowerShell and change to the project directory:
-
-```powershell
-Set-Location "C:\path\to\Ransomware-detection-system-using-machine-learning"
-```
-
-Replace the path with the location where this project is stored.
-
-## 3. Install the Project
-
-### Option 1: Manual Installation (Recommended)
-
-```powershell
-# Create virtual environment
-python -m venv .venv
-
-# Activate virtual environment
-.\.venv\Scripts\Activate.ps1
-
-# Install dependencies
-pip install -r projectConfig\requirements.txt
-
-# Initialize application
-python -m app.main --status
-```
-
-### Option 2: Using Installer Script
-
-```powershell
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\install.ps1
-```
-
-The installer checks Windows and Python, creates `.venv`, installs dependencies, creates data directories, and validates the installation.
-
-## 4. Activate the Virtual Environment
-
-```powershell
-.\.venv\Scripts\Activate.ps1
-```
-
-Confirm that the application is available:
-
-```powershell
-python -m app.main --version
-python -m app.main --status
-```
-
-Expected status output includes:
+## 🏗️ System Architecture
 
 ```text
-Protected
-Response policy: alertOnly
+┌───────────────────────────────────────────────────────────────────────────────┐
+│                           OPERATING INTERFACES                                │
+│   ┌───────────────────────────────┐       ┌───────────────────────────────┐   │
+│   │   Desktop SOC GUI Dashboard   │       │   Interactive CLI / Daemon    │   │
+│   │   (app/ui/mainWindow.py)      │       │   (app/ui/interactive.py)     │   │
+│   └──────────────┬────────────────┘       └──────────────┬────────────────┘   │
+└──────────────────┼───────────────────────────────────────┼────────────────────┘
+                   ▼                                       ▼
+┌───────────────────────────────────────────────────────────────────────────────┐
+│                      RUNTIME DETECTION CONTROLLER                             │
+│                  (app/runtime/controller.py & worker.py)                     │
+├──────────────────────────────────────┬────────────────────────────────────────┤
+│   MultiPathEventCollector            │   Risk & Policy Evaluation Engine      │
+│   - Windows ReadDirectoryChangesW    │   - 16-Dimensional Feature Windowing   │
+│   - Polling Fallback Watchers        │   - Encrypted Random Forest Predictor  │
+│   - Process Attribution (PID/PPID)   │   - Token Bucket Alert Rate Limiter    │
+├──────────────────────────────────────┼────────────────────────────────────────┤
+│   Forensic Evidence Collector        │   Operations, Health & Hot-Reload      │
+│   - Forensic Snapshots & Ancestry    │   - Subsystem Health Engine (JSON)     │
+│   - SHA-256 Content & Path Hashing   │   - Zero-Downtime Config/Model Reload  │
+│   - WAL Optimization & Pruning       │   - Online Hot Backup & Recovery       │
+└──────────────────────────────────────┴────────────────────────────────────────┘
 ```
 
-## 5. Launch the Interactive Interface
+---
 
-Start the interactive terminal menu:
+## 📋 System Requirements
+
+- **Operating System:**
+  - **Windows 10 / Windows 11** (Recommended for full `ReadDirectoryChangesW` and native process attribution)
+  - **Linux / macOS** (Supported via polling-based fallback engine)
+- **Python:** Python 3.11 or newer (Python 3.12 / 3.14 fully tested)
+- **Dependencies:** `psutil`, `pandas`, `scikit-learn`, `joblib`, `cryptography`, `pytest`, `pytest-cov`
+- **Network:** 100% Offline. Zero internet connection required after dependency installation.
+
+---
+
+## 🚀 Quick Installation
+
+### 1. Clone & Set Up Virtual Environment
+
+```powershell
+# Navigate to repository directory
+Set-Location "C:\path\to\ransomware-detection-system"
+
+# Create and activate Python virtual environment
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+### 2. Install Dependencies
+
+```powershell
+pip install -r projectConfig\requirements.txt
+```
+
+### 3. Verify Setup
+
+```powershell
+# Run subsystem health diagnostic
+python -m app.main --health
+```
+
+---
+
+## 🖥️ Launching the Application
+
+### 1. Desktop Graphical SOC Dashboard (Recommended)
+
+Launch the modern dark-themed desktop dashboard:
+
+```powershell
+python -m app.main --gui
+# or
+python -m app.main -g
+```
+
+#### Dashboard Features:
+1. **Live Activity & Streaming Telemetry:** Real-time event counter, color-coded threat gauge (LOW / ELEVATED / CRITICAL), and rolling file activity log.
+2. **Forensic Lineage Browser:** Inspect captured incident snapshots, view full process execution chains (`PID -> PPID -> Grandparent`), and export structured JSON reports.
+3. **Diagnostics & Subsystem Health:** Subsystem status matrix (Model, Database, Monitoring Paths, Storage, Logging), host CPU/RAM telemetry, and on-demand self-tests.
+4. **ML Model Management & Retraining:** Inspect model encryption status, test and swap candidate models, and launch closed-loop model retraining with 5-fold cross-validation.
+5. **Folder & Database Settings:** Manage protected directories (Add/Browse/Remove), configure alert rate-limit cooldowns, create database backups, and run WAL optimization.
+
+---
+
+### 2. Zion CRT Terminal Desktop Station (Integrated ThreeUI WebGL SOC)
+
+Launch the hardware-accelerated CRT defense station desktop application with live Python backend integration:
+
+```powershell
+# Launch via Python CLI flag
+python -m app.main --ui
+# or shorthand
+python -m app.main -u
+
+# Or launch directly with npm
+npm run electron:preview
+# or in development mode
+npm start
+```
+
+#### Integrated Desktop Features:
+- **WebGL Fragment Shader & 2D Canvas:** Authentic retro CRT curvature, bloom, scanline rasterization, phosphor green typography, and customizable shader parameters.
+- **Interactive CRT Defense Terminal:** Execute real-time defense commands directly from the CRT shell (`scan`, `status`, `health`, `metrics`, `demo benign`, `demo attack`, `retrain`, `forensics`, `help`).
+- **Live SOC Telemetry Stream:** Real-time event log with Windows `ReadDirectoryChangesW` process attribution (`PID`, `PPID`, action, path hash).
+- **One-Click Simulation Lab:** Generate benign office files, simulate normal work, and run sandboxed ransomware attack bursts with instant visual telemetry.
+- **Forensic Lineage Tree:** Interactive `PID -> PPID -> Grandparent` execution chain visualizer with SHA-256 evidence inspection and JSON exporter.
+- **Diagnostics & Observability:** Live health indicators for all 5 subsystems (Model, DB, Paths, Storage, Logging) and host CPU/RAM metrics.
+- **ML Retraining Studio & Folder Manager:** Automated 5-fold cross-validation retraining, AES-256-GCM verification, and directory picker dialog.
+
+---
+
+### 3. Interactive Terminal Console
+
+Launch the terminal-based interactive control center:
 
 ```powershell
 python -m app.main --interactive
+# or
+python -m app.main -i
 ```
 
-The interactive menu provides:
-- Real-time monitoring with live display
-- System status and configuration
-- Detection history viewing
-- One-time scanning
-- Model management
+Provides a live ANSI dashboard with real-time risk gauges, session uptime counters, and quick keyboard navigation.
 
-**Quick Commands:**
+---
+
+### 3. Headless Background Monitoring
+
+Run the detection engine as a lightweight background daemon:
+
 ```powershell
-python -m app.main --status    # View system status
-python -m app.main --scan      # Perform one-time scan
-python -m app.main --monitor   # Start live monitoring
-python -m app.main --history   # View detection history
+# Continuous monitoring (stop with Ctrl+C)
+python -m app.main --monitor
+
+# Bounded monitoring (e.g. 50 samples with 1.0s interval)
+python -m app.main --monitor --samples 50 --interval 1.0
+
+# Headless monitoring with dynamic hot-reloading enabled
+python -m app.main --monitor --hot-reload
 ```
 
-## 6. Generate Safe Test Files
+---
 
-Generate non-sensitive files in the disposable test directory:
+## 🛠️ Complete CLI Command Reference
+
+| Command Flag | Description |
+| :--- | :--- |
+| `python -m app.main --ui` / `-u` | Launch the Integrated Electron Desktop CRT Terminal Station |
+| `python -m app.main --gui` / `-g` | Launch the Desktop Graphical SOC Dashboard |
+| `python -m app.main --interactive` / `-i` | Launch the interactive terminal console |
+| `python -m app.main --status` | Display detailed protection status and active paths |
+| `python -m app.main --health` | Run comprehensive subsystem health check |
+| `python -m app.main --health --json` | Output subsystem health report in structured JSON format |
+| `python -m app.main --metrics` | Display real-time process CPU, RAM, and detection counters |
+| `python -m app.main --scan` | Perform an immediate one-time threat scan across all paths |
+| `python -m app.main --history` | Display tabular history of the 50 most recent detections |
+| `python -m app.main --forensics` | List captured forensic evidence snapshots |
+| `python -m app.main --snapshot-id <ID>` | Display detailed evidence and process ancestry for a snapshot |
+| `python -m app.main --snapshot-id <ID> --json` | Export forensic snapshot report as structured JSON |
+| `python -m app.main --validate-config <file>` | Validate a candidate JSON configuration against the schema |
+| `python -m app.main --swap-model <path>` | Test and swap the active ML model with zero downtime |
+| `python -m app.main --optimize-db` | Run SQLite WAL checkpoint, integrity check, and vacuum |
+| `python -m app.main --prune-days <N>` | Delete historical file events and logs older than N days |
+| `python -m app.main --demo` | Launch interactive demonstration & lab workload wizard |
+| `python -m app.main --demo benign --demo-count 25` | Generate 25 benign office documents (Word, Excel, PDF, CSV, JSON, Python, JPG) |
+| `python -m app.main --demo normal --demo-steps 10` | Simulate normal low-velocity user office editing activity |
+| `python -m app.main --demo attack --demo-count 20` | Simulate safe sandboxed ransomware mass renames & high-entropy write bursts |
+| `python -m app.main --demo clean` | Clean and reset the demo sandbox directory |
+
+---
+
+## 🧪 Safe Testing & Lab Simulation
+
+The repository includes safe, non-destructive tools to simulate benign and ransomware-like behavioral patterns without modifying files outside designated disposable test directories:
+
+### 1. Generate Harmless Test Files
 
 ```powershell
 python scripts\generateTestData.py --outputDirectory testFiles --files 100
 ```
+Generates 100 non-sensitive dummy documents, text files, and images inside `testFiles/`.
 
-The generator creates harmless TXT, CSV, JSON, document-like, image-like, and PDF-like files. It never executes programs and never modifies files outside the selected output directory.
-
-## 7. Run the Safe Behavior Simulator
-
-The simulator requires a marker file and operates only in the marked directory:
+### 2. Run Safe Activity Simulator
 
 ```powershell
-python scripts\legacy\labActivitySimulator.py testFiles --init --count 10
+python scripts\legacy\labActivitySimulator.py testFiles --init --count 25
 ```
+Simulates benign batch edits, modifications, and rapid renames inside `testFiles/` to verify real-time event capture.
 
-The simulator creates, modifies, and renames generated files. It does not encrypt, delete, or access files outside `testFiles`.
+---
 
-## 8. Collect Behavior Data
+## 🧠 Machine Learning & Retraining Pipeline
 
-Start the collector:
+The detection pipeline computes 16 behavioral features across rolling 60-second time windows (velocity, rename ratios, extension entropy, write bursts, directory depth alterations) and feeds them to an encrypted Random Forest classifier.
 
-```powershell
-python -m scripts.legacy.dataCollector
-```
-
-Perform benign activity or run the safe simulator in another PowerShell window. Press `Ctrl+C` to stop collection.
-
-The collector writes samples to:
-
-```text
-data\ransomwareBehaviorDataset.csv
-```
-
-The default collector label is `Benign`. Use only controlled, safe workloads when developing additional labeled data. Do not run real ransomware.
-
-The existing dataset fixture is located at `data\datasets\ransomwareBehaviorDataset.csv`.
-
-## 9. Run Monitoring
-
-### Interactive Monitoring (Recommended)
-
-```powershell
-python -m app.main --interactive
-# Select option 1 (Start Monitoring)
-```
-
-Shows a live display with real-time updates:
-- Current threat level (color-coded)
-- Risk score
-- Files changed counter
-- Recent activity
-- System information
-
-Press Ctrl+C to return to the menu.
-
-### Headless Monitoring
-
-```powershell
-# Unbounded monitoring (press Ctrl+C to stop)
-python -m app.main --monitor
-
-# Bounded monitoring (10 samples, then stop)
-python -m app.main --monitor --samples 10 --interval 1
-```
-
-The command monitors the configured directory, aggregates file activity, evaluates risk, and stores detection records in `data\database\detector.sqlite3`.
-
-Runtime responses are log-only or alert-only. The application does not delete files, kill processes, or change network settings.
-
-## 10. Run the Test Suite
-
-Compile the project:
-
-```powershell
-python -m compileall app trainingModel scripts tests
-```
-
-Run all tests:
-
-```powershell
-python -m unittest discover -s tests -p "test*.py"
-```
-
-The tests cover configuration safety, SQLite initialization, file events, feature aggregation, risk scoring, model training, model validation, unlearning, controller persistence, and safe test-data generation.
-
-## 11. Train a Model
-
-The training dataset must contain the shared feature columns and at least two labels. The current legacy dataset may contain only benign samples, so inspect it before training:
-
-```powershell
-python -c "import pandas as pd; data = pd.read_csv('data/ransomwareBehaviorDataset.csv'); print(data.shape); print(data['label'].value_counts(dropna=False))"
-```
-
-Train a model after sufficient labeled data has been collected:
-
-```powershell
-python -m trainingModel.training.ransomwareLearner --datasetPath data/ransomwareBehaviorDataset.csv --modelPath data/models/candidate.joblib
-```
-
-The trainer produces a model artifact and `metadata.json`. Metrics are calculated from held-out data and are never fabricated.
-
-## 12. Model Training
-
-### Command-Line Training
-
+### Train a Candidate Model
 ```powershell
 python -m trainingModel.training.ransomwareLearner `
   --datasetPath data/ransomwareBehaviorDataset.csv `
-  --modelPath data/models/mymodel.joblib
+  --modelPath data/models/candidate.joblib
 ```
 
-The trainer:
-- Validates dataset structure and labels
-- Trains a classification model
-- Evaluates on held-out data
-- Saves model artifact and metadata
-- Reports accuracy, precision, recall, F1 score
+### Run Retraining with Feedback
+```powershell
+python -m app.models.retrainingPipeline `
+  --evaluate-only
+```
 
-### Select Active Model
+---
 
-Use the interactive interface:
+## 🧪 Running the Test Suite
+
+The system includes a comprehensive test suite of 312+ automated tests covering security boundaries, concurrency, ML pipelines, forensics, and GUI components:
 
 ```powershell
-python -m app.main --interactive
-# Select option 6 (Configuration)
-# Select option 4 (Select Model)
+# Run full test suite with pytest
+pytest -v
+
+# Run test suite with code coverage
+pytest --cov=app --cov-report=term-missing
 ```
 
-Or manually update `data/settings.json`:
+---
 
-```json
-{
-  "model": {
-    "path": "data/models/mymodel.joblib"
-  }
-}
-```
-
-## 13. Validate and Activate a Model
-
-Model activation requires a valid artifact and matching metadata checksum. Use the model registry from Python code after training:
-
-```powershell
-python -c "from pathlib import Path; from app.config.configuration import getDataDirectory; from app.models.modelRegistry import ModelRegistry; registry = ModelRegistry(getDataDirectory() / 'models', getDataDirectory() / 'database' / 'detector.sqlite3'); print(registry.activateModel(Path('data/models/candidate.joblib')))"
-```
-
-The active model is stored under:
+## 📁 Repository Structure
 
 ```text
-data\models\current\
+ransomware-detection-system/
+├── app/
+│   ├── config/              # Configuration validation, path resolver & hot-reloader
+│   ├── detection/           # Predictor, risk engine & token bucket alert policy
+│   ├── domain/              # Schemas, feature definitions & data contracts
+│   ├── features/            # Rolling window entropy & behavioral feature extraction
+│   ├── forensics/           # Forensic evidence snapshots & process tree tracer
+│   ├── logging/             # Structured JSON logger & security audit loggers
+│   ├── models/              # Model registry, retraining pipeline & validation
+│   ├── monitoring/          # Multi-path collector, Windows API & process attributor
+│   ├── operations/          # Subsystem health checker & online backup manager
+│   ├── runtime/             # Detection controller, monitoring worker & workers
+│   ├── security/            # Path validator, privacy hasher & AES-256 model encryption
+│   ├── storage/             # SQLite connection pool, schema migrations & WAL optimizer
+│   └── ui/                  # Modern Desktop GUI Dashboard (mainWindow.py) & Console UI
+├── data/
+│   ├── backups/             # Online SQLite snapshots and SHA-256 manifests
+│   ├── database/            # detector.sqlite3 (WAL mode)
+│   ├── datasets/            # Labeled behavioral datasets
+│   ├── logs/                # application.log & audit.log (JSON format)
+│   └── models/              # Encrypted .joblib model artifacts & metadata
+├── projectConfig/           # requirements.txt & packaging configurations
+├── scripts/                 # Safe test data generators & simulation utilities
+├── tests/                   # 312+ Unit, integration, security & GUI tests
+├── QUICKSTART.md            # Step-by-step walkthrough & quickstart guide
+└── README.md                # Main documentation
 ```
 
-Tampered, incompatible, or incomplete model artifacts are rejected.
+---
 
-## 14. Run Exact-Retraining Unlearning
+## 🛡️ Security Boundaries & Disclaimer
 
-The baseline unlearning workflow removes a selected label and retrains from the remaining approved data:
+This software is an educational and defensive security tool developed for endpoint defense, threat detection research, and SOC analysis:
+- The detection engine operates in **read-only, non-destructive mode** and does not terminate processes or modify user files without explicit manual operator intervention.
+- Do not run live malicious payloads. Use the included safe lab simulation scripts (`scripts/generateTestData.py` and `scripts/legacy/labActivitySimulator.py`).
 
-```powershell
-python -m trainingModel.unlearning.unlearn --datasetPath data/ransomwareBehaviorDataset.csv --forget Ransomware --modelPath data/models/unlearned.joblib
-```
+---
 
-The dataset must contain the label supplied to `--forget` and enough remaining data for training. This is a measurable retraining baseline; it does not claim mathematically perfect forgetting.
+## 📄 License
 
-## 15. Stop and Uninstall
-
-Stop a running collector or monitor with `Ctrl+C`.
-
-To remove application files while preserving the `data` directory:
-
-```powershell
-.\deployment\uninstall.ps1
-```
-
-Review the retained data before removing it manually.
-
-## 16. Project Folders
-
-```text
-app/             Runtime configuration, monitoring, detection, storage, and UI
-trainingModel/   Model training and exact-retraining unlearning
-scripts/         Safe dataset-generation and compatibility utilities
-projectConfig/   Pinned dependencies and packaging metadata
-deployment/      Installer compatibility utilities
-tests/            Unit and integration tests
-data/             Datasets, database, logs, and model artifacts
-docs/             Architecture, installation, dataset, and security documentation
-testFiles/        Disposable local simulation directory
-```
-
-## 17. Safety Limitations
-
-This project does not execute real ransomware. It does not implement encryption, deletion, process termination, network isolation, credential collection, persistence, evasion, or destructive quarantine. Exact process attribution and native Windows event monitoring are separate future hardening tasks.
-
-**This is an educational and research project:**
-- Not production-ready for critical infrastructure
-- Should be combined with other security measures
-- Designed for detection, not prevention or remediation
-- All monitoring is read-only and non-destructive
-
-More detail is available in:
-- [README_CMD.md](README_CMD.md) - Complete CMD version documentation
-- [ANALYSIS_REPORT.md](ANALYSIS_REPORT.md) - Code analysis and bug fixes
-- [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) - Migration from GUI version
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) - System architecture
-- [docs/DATASET.md](docs/DATASET.md) - Dataset information
-- [docs/SECURITY.md](docs/SECURITY.md) - Security considerations
-- [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) - Development guide
-
-
-
-## Live Monitoring Display
-
-The terminal interface provides real-time monitoring visualization:
-
-```
-═══════════════════════════════════════════════════════════════
-        RANSOMWARE DETECTION SYSTEM - LIVE MONITORING
-═══════════════════════════════════════════════════════════════
-
-● PROTECTED  |  2026-10-05 14:30:07
-
-STATUS OVERVIEW
-────────────────────────────────────────────────────────────────
-  Threat Level:     LOW
-  Risk Score:       0.0000
-  Files Changed:    0
-  Detections:       0
-  Uptime:           2m 15s
-
-RECENT ACTIVITY
-────────────────────────────────────────────────────────────────
-  No recent file activity
-
-SYSTEM INFORMATION
-────────────────────────────────────────────────────────────────
-  Monitoring Path:  C:\path\to\testFiles
-  Model Status:     Active
-
-Press Ctrl+C to stop monitoring
-```
-
-**Features:**
-- Refreshes 5 times per second
-- Color-coded threat levels (Green/Yellow/Red)
-- Real-time file event counter
-- Recent activity tracking
-- Cumulative session statistics
-- ANSI color support
-
-**Performance:**
-- Memory usage: ~70 MB (68% less than GUI version)
-- CPU usage: 2-5% (50% reduction)
-- Startup time: <1 second
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.

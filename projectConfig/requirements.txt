@@ -2,4 +2,5 @@ psutil==7.2.2
 pandas==3.0.5
 scikit-learn==1.9.0
 joblib==1.6.0
+cryptography==42.0.5
 # PySide6==6.11.2  # Removed - GUI no longer needed (CMD-only interface)

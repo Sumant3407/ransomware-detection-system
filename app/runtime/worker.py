@@ -1,8 +1,8 @@
-"""Qt worker boundary for background monitoring."""
+"""Qt worker boundary for background monitoring with multi-path support."""
 
-from PySide6.QtCore import QObject, Signal, Slot, QThread
-
+from typing import Optional, Sequence, Union
 from pathlib import Path
+from PySide6.QtCore import QObject, Signal, Slot, QThread
 
 from app.runtime.controller import DetectionController
 
@@ -12,9 +12,23 @@ class MonitoringWorker(QObject):
     failed = Signal(str)
     finished = Signal()
 
-    def __init__(self, monitoredPath: Path, databasePath: Path, modelPath: Path | None = None, intervalSeconds: float = 1.0):
+    def __init__(
+        self,
+        monitoredPath: Path | Sequence[Path] | None = None,
+        databasePath: Path = ...,
+        modelPath: Path | None = None,
+        intervalSeconds: float = 1.0,
+        monitoredPaths: Optional[Sequence[Path]] = None,
+    ):
         super().__init__()
-        self.monitoredPath = monitoredPath
+        if monitoredPaths is not None:
+            self.monitoredPaths = [Path(p).resolve() for p in (monitoredPaths if isinstance(monitoredPaths, (list, tuple, set)) else [monitoredPaths])]
+        elif monitoredPath is not None:
+            self.monitoredPaths = [Path(p).resolve() for p in (monitoredPath if isinstance(monitoredPath, (list, tuple, set)) else [monitoredPath])]
+        else:
+            raise ValueError("At least one monitored path is required")
+
+        self.monitoredPath = self.monitoredPaths[0]
         self.databasePath = databasePath
         self.modelPath = modelPath
         self.controller: DetectionController | None = None
@@ -25,9 +39,9 @@ class MonitoringWorker(QObject):
     def run(self) -> None:
         self.running = True
         self.controller = DetectionController(
-            self.monitoredPath,
-            self.databasePath,
-            self.modelPath,
+            monitoredPaths=self.monitoredPaths,
+            databasePath=self.databasePath,
+            modelPath=self.modelPath,
         )
         try:
             while self.running:

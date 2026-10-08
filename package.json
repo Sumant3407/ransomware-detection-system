@@ -1,0 +1,32 @@
+{
+  "name": "ransomware-defense-station-crt",
+  "version": "2.4.0",
+  "description": "Desktop CRT Terminal Application for Ransomware Behavior Defense Station",
+  "main": "dist-electron/main.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "build:electron": "tsc -p tsconfig.electron.json",
+    "start": "concurrently -k \"vite\" \"wait-on tcp:5173 && electron dist-electron/main.js\"",
+    "electron:dev": "concurrently -k \"vite\" \"wait-on tcp:5173 && electron dist-electron/main.js\"",
+    "electron:preview": "npm run build && electron dist-electron/main.js"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.0",
+    "cross-env": "^7.0.3",
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.1",
+    "wait-on": "^8.0.1"
+  }
+}
